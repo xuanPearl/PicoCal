@@ -1,23 +1,32 @@
-import React, { useState, useRef, useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
+import React, { useState, useRef } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Modal,
+  ImageBackground,
+} from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { colors } from "../theme/colors";
+import { NutritionCard } from "../components/NutritionCard";
+import { spacing } from "../theme/spacing";
 
 export function VisionScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [isScanning, setIsScanning] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [showResult, setShowResult] = useState(false);
   const cameraRef = useRef<CameraView>(null);
   const isFocused = useIsFocused();
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View style={styles.container} />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>我们需要您的相机权限来识别食物</Text>
@@ -33,15 +42,25 @@ export function VisionScreen() {
       try {
         setIsScanning(true);
         const photo = await cameraRef.current.takePictureAsync();
-        // TODO: Send photo to AI service for recognition
-        console.log("Photo taken:", photo?.uri);
-        Alert.alert("咔嚓！", "已捕获图片，AI 识别功能开发中...");
+        
+        if (photo?.uri) {
+          setCapturedImage(photo.uri);
+          // Simulate AI processing delay
+          setTimeout(() => {
+            setShowResult(true);
+            setIsScanning(false);
+          }, 1500);
+        }
       } catch (error) {
         console.error("Failed to take picture:", error);
-      } finally {
         setIsScanning(false);
       }
     }
+  };
+
+  const resetScanner = () => {
+    setShowResult(false);
+    setCapturedImage(null);
   };
 
   return (
@@ -54,16 +73,55 @@ export function VisionScreen() {
             </View>
             <View style={styles.controls}>
               <TouchableOpacity
-                style={[styles.captureBtn, isScanning && styles.captureBtnActive]}
+                style={[
+                  styles.captureBtn,
+                  isScanning && styles.captureBtnActive,
+                ]}
                 onPress={takePicture}
                 disabled={isScanning}
               >
-                <Ionicons name="camera" size={32} color="white" />
+                {isScanning ? (
+                  <Ionicons name="hourglass" size={32} color="white" />
+                ) : (
+                  <Ionicons name="camera" size={32} color="white" />
+                )}
               </TouchableOpacity>
             </View>
           </View>
         </CameraView>
       )}
+
+      {/* Result Modal */}
+      <Modal visible={showResult} transparent animationType="slide">
+        <View style={styles.modalContainer}>
+          {capturedImage && (
+            <ImageBackground
+              source={{ uri: capturedImage }}
+              style={styles.modalBackground}
+              blurRadius={10}
+            >
+              <View style={styles.modalContent}>
+                <NutritionCard
+                  foodName="香煎鸡胸肉沙拉"
+                  calories={342}
+                  healthScore={9}
+                  nutrients={{
+                    protein: 35,
+                    carbs: 12,
+                    fat: 8,
+                  }}
+                />
+                <TouchableOpacity
+                  style={styles.closeBtn}
+                  onPress={resetScanner}
+                >
+                  <Ionicons name="close-circle" size={48} color="white" />
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          )}
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -107,7 +165,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     textShadowColor: "rgba(0,0,0,0.5)",
-    textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
   controls: {
@@ -127,5 +184,21 @@ const styles = StyleSheet.create({
   },
   captureBtnActive: {
     backgroundColor: colors.textMuted,
+  },
+  modalContainer: {
+    flex: 1,
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.lg,
+  },
+  closeBtn: {
+    marginTop: spacing.xl,
   },
 });
