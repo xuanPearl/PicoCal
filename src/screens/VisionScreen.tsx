@@ -3,11 +3,11 @@ import { Text, StyleSheet } from "react-native";
 import { ScreenLayout } from "../components/ScreenLayout";
 import { colors } from "../theme/colors";
 
-export function SocialScreen() {
+export function VisionScreen() {
   return (
     <ScreenLayout>
-      <Text style={styles.title}>The Vibe</Text>
-      <Text style={styles.subtitle}>社交圈子与动态</Text>
+      <Text style={styles.title}>The Eye</Text>
+      <Text style={styles.subtitle}>AI 视觉识别中心</Text>
     </ScreenLayout>
   );
 }

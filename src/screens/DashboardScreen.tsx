@@ -3,11 +3,11 @@ import { Text, StyleSheet } from "react-native";
 import { ScreenLayout } from "../components/ScreenLayout";
 import { colors } from "../theme/colors";
 
-export function SocialScreen() {
+export function DashboardScreen() {
   return (
     <ScreenLayout>
-      <Text style={styles.title}>The Vibe</Text>
-      <Text style={styles.subtitle}>社交圈子与动态</Text>
+      <Text style={styles.title}>The Brain</Text>
+      <Text style={styles.subtitle}>身体数据与饮食建议</Text>
     </ScreenLayout>
   );
 }

@@ -1,9 +1,10 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CameraScreen } from "../screens/CameraScreen";
-import { FeedScreen } from "../screens/FeedScreen";
-import { DataScreen } from "../screens/DataScreen";
-import { ProfileScreen } from "../screens/ProfileScreen";
+import { Ionicons } from "@expo/vector-icons";
+
+import { VisionScreen } from "../screens/VisionScreen";
+import { DashboardScreen } from "../screens/DashboardScreen";
+import { SocialScreen } from "../screens/SocialScreen";
 import { colors } from "../theme/colors";
 
 const Tab = createBottomTabNavigator();
@@ -14,33 +15,44 @@ export function RootTabs() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopWidth: 0,
-          elevation: 0,
+          backgroundColor: colors.background,
+          borderTopColor: colors.surface,
+          height: 88,
         },
         tabBarActiveTintColor: colors.accentOrange,
         tabBarInactiveTintColor: colors.textMuted,
+        tabBarShowLabel: true,
       }}
     >
       <Tab.Screen
-        name="Camera"
-        component={CameraScreen}
-        options={{ tabBarLabel: "识别", tabBarIcon: () => null }}
+        name="Dashboard"
+        component={DashboardScreen}
+        options={{
+          tabBarLabel: "The Brain",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="stats-chart" size={size} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
-        name="Feed"
-        component={FeedScreen}
-        options={{ tabBarLabel: "动态", tabBarIcon: () => null }}
+        name="Vision"
+        component={VisionScreen}
+        options={{
+          tabBarLabel: "The Eye",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="camera" size={32} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
-        name="Data"
-        component={DataScreen}
-        options={{ tabBarLabel: "数据", tabBarIcon: () => null }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ tabBarLabel: "我的", tabBarIcon: () => null }}
+        name="Social"
+        component={SocialScreen}
+        options={{
+          tabBarLabel: "The Vibe",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people" size={size} color={color} />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
